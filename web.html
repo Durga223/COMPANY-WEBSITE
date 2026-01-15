@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAGARIOUS SOLUTIONS | The Digital Frontier</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #030308;
+            --cyan: #00f2ff;
+            --purple: #bc13fe;
+            --yellow: #f0db4f;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(0, 242, 255, 0.2);
+            --font-main: 'Rajdhani', sans-serif;
+            --font-cyber: 'Orbitron', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- HIGH-TECH BACKGROUND LAYER --- */
+        #canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #0a1128 0%, #030308 100%);
+        }
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1;
+            opacity: 0.2;
+            mask-image: linear-gradient(to bottom, black, transparent);
+        }
+
+        /* --- NAV BAR --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; background: rgba(3, 3, 8, 0.8);
+            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            font-family: var(--font-cyber); font-weight: 900; font-size: 1.6rem;
+            color: #fff; text-decoration: none; letter-spacing: 4px;
+        }
+        .logo span { color: var(--cyan); text-shadow: 0 0 15px var(--cyan); }
+
+        .nav-links { display: flex; gap: 35px; list-style: none; }
+        .nav-links a {
+            color: #fff; text-decoration: none; font-size: 0.85rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+            position: relative;
+        }
+        .nav-links a:hover { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px; background: var(--cyan); transition: 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            perspective: 1000px;
+        }
+        .hero-tag {
+            font-family: var(--font-cyber); font-size: 0.9rem; color: var(--cyan);
+            letter-spacing: 10px; margin-bottom: 20px; animation: pulse 2s infinite;
+        }
+        .hero h1 {
+            font-family: var(--font-cyber); font-size: clamp(3rem, 10vw, 6.5rem);
+            line-height: 0.9; font-weight: 900; margin-bottom: 30px;
+            background: linear-gradient(to bottom, #fff 30%, #444 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.1));
+        }
+
+        /* --- BUTTONS --- */
+        .btn-cyber {
+            position: relative; padding: 18px 45px; background: transparent;
+            color: #fff; font-family: var(--font-cyber); font-size: 0.8rem;
+            border: 1px solid var(--cyan); cursor: pointer; transition: 0.4s;
+            clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%);
+            text-decoration: none; font-weight: bold; overflow: hidden;
+        }
+        .btn-cyber:hover {
+            background: var(--cyan); color: #000;
+            box-shadow: 0 0 50px var(--cyan); transform: scale(1.05);
+        }
+
+        /* --- CONTAINERS & REVEALS --- */
+        .container { max-width: 1200px; margin: auto; padding: 120px 25px; }
+        .section-title {
+            font-family: var(--font-cyber); font-size: 2.5rem; margin-bottom: 60px;
+            display: flex; align-items: center; gap: 20px;
+        }
+        .section-title::before {
+            content: ''; width: 50px; height: 4px; background: var(--cyan); border-radius: 2px;
+        }
+
+        .reveal { opacity: 0; transform: translateY(50px); transition: 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- SERVICES GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+        
+        .glass-card {
+            background: var(--glass); border: 1px solid var(--border);
+            padding: 50px; border-radius: 4px; backdrop-filter: blur(10px);
+            position: relative; transition: 0.5s; overflow: hidden;
+        }
+        .glass-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan)); transition: 0.5s;
+        }
+        .glass-card:hover {
+            transform: translateY(-15px) rotateX(5deg);
+            border-color: var(--cyan); background: rgba(0, 242, 255, 0.05);
+        }
+        .glass-card:hover::before { left: 100%; }
+        .glass-card i { font-size: 3rem; color: var(--cyan); margin-bottom: 25px; display: block; }
+        .glass-card h3 { font-family: var(--font-cyber); margin-bottom: 15px; font-size: 1.4rem; }
+        .glass-card p { color: #aaa; font-size: 1rem; }
+
+        /* --- CAREER NODES --- */
+        .job-node {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(188, 19, 254, 0.3);
+            padding: 25px; margin-bottom: 20px; border-left: 4px solid var(--purple);
+            transition: 0.3s; position: relative;
+        }
+        .job-node:hover {
+            background: rgba(188, 19, 254, 0.1); border-color: var(--purple);
+            transform: translateX(10px);
+        }
+        .job-tag {
+            position: absolute; top: 10px; right: 20px; font-size: 0.7rem;
+            color: var(--purple); font-weight: bold; font-family: var(--font-cyber);
+        }
+
+        /* --- CONTACT FORM --- */
+        .cyber-form {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+            background: var(--glass); padding: 50px; border: 1px solid var(--border);
+        }
+        .cyber-form input, .cyber-form textarea {
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            padding: 18px; color: #fff; font-family: var(--font-main);
+            outline: none; font-size: 1rem;
+        }
+        .cyber-form input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
+        .full-width { grid-column: span 2; }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 100px 50px 40px; background: #0c090e;
+            border-top: 1px solid var(--border);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 60px;
+        }
+        .footer-logo h2 { font-family: var(--font-cyber); letter-spacing: 5px; margin-bottom: 20px; }
+        .footer-logo span { color: var(--purple); }
+        .social-icons a { 
+            font-size: 1.8rem; color: #fff; margin-right: 25px; transition: 0.3s; 
+        }
+        .social-icons a:hover { color: var(--cyan); transform: translateY(-5px); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; text-shadow: 0 0 10px var(--cyan); }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            nav { padding: 20px; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 3.5rem; }
+            .cyber-form { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ANIMATED BACKGROUND -->
+    <div id="canvas-container">
+        <div class="cyber-grid"></div>
+        <canvas id="plexusCanvas"></canvas>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="#" class="logo">VAGARIOUS <span>//</span></a>
+        <img src="https://vagarioussolutions.com/images/vagarious.png" width="140" height="60">
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">About us</a></li>
+            <li><a href="#careers">careers</a></li>
+            <li><a href="#contact">contact</a></li>
+        </ul>
+        <a href="#contact" class="btn-cyber" style="padding: 10px 25px; font-size: 0.7rem;">APPLY</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="hero-tag">WELCOME TO VAGARIOUS SOLUTIONS</div>
+        <h1 id="glitch-title">VAGARIOUS SOLUTIONS</h1>
+        <p class="reveal" style="font-size: 1.3rem; letter-spacing: 3px; color: #888; margin-bottom: 40px;">
+            ENGINEERING THE NEXT GENERATION OF DIGITAL ARCHITECTURE
+        </p>
+        <div class="reveal">
+            <a href="#services" class="btn-cyber">Services</a>
+        </div>
+    </section>
+
+    <div class="container">
+        
+        <!-- SERVICES -->
+        <section id="services">
+            <h2 class="section-title">CORE SERVICES</h2>
+            <div class="grid">
+                <div class="glass-card reveal">
+                    <i class="fas fa-terminal"></i>
+                    <h3>Software Dev</h3>
+                    <p>Building hyper-scalable enterprise applications and microservice ecosystems with modern tech stacks.</p>
+                </div>
+                <div class="glass-card reveal">
+                    <i class="fas fa-microchip"></i>
+                    <h3>IT Staffing</h3>
+                    <p>Connecting industry giants with the top 1% of specialized technical talent for mission-critical roles.</p>
+                </div>
+                <div class="glass-card reveal">
+                    <i class="fas fa-database"></i>
+                    <h3>Permanent Solutions</h3>
+                    <p>Sustainable talent acquisition strategies to build long-term high-performance engineering teams.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAREERS -->
+        <section id="careers" style="margin-top: 100px;">
+            <h2 class="section-title"> CAREERS</h2>
+            <div class="grid">
+                <div class="reveal">
+                    <h3 style="color: var(--cyan); margin-bottom: 25px; font-family: var(--font-cyber);">// TECH_SECTOR</h3>
+                    <div class="job-node">
+                        <span class="job-tag">BACKEND</span>
+                        <h4>Java Developer</h4>
+                        <p>Spring Boot, Microservices, Cloud Native (2-5 yrs exp)</p>
+                    </div>
+                    <div class="job-node">
+                        <span class="job-tag">FULLSTACK</span>
+                        <h4>.NET Developer</h4>
+                        <p>C#, ASP.NET Core, SQL Architecture (2-4 yrs exp)</p>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <h3 style="color: var(--purple); margin-bottom: 25px; font-family: var(--font-cyber);">// OPS_SECTOR</h3>
+                    <div class="job-node">
+                        <span class="job-tag">RECRUITMENT</span>
+                        <h4>HR Executive</h4>
+                        <p>Technical Sourcing & Talent Management (1-3 yrs exp)</p>
+                    </div>
+                    <div class="job-node">
+                        <span class="job-tag">STRATEGY</span>
+                        <h4>Business Development</h4>
+                        <p>Market Expansion & Client Acquisition (2+ yrs exp)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" style="margin-top: 100px;">
+            <h2 class="section-title">CONTACT</h2>
+            <div class="cyber-form reveal">
+                <input type="text" placeholder="SUBJECT IDENTITY" required>
+                <input type="email" placeholder="ENCRYPTED EMAIL" required>
+                <input type="text" placeholder="PURPOSE / ROLE" class="full-width">
+                <textarea rows="5" placeholder="TRANSMISSION DATA" class="full-width"></textarea>
+                <button class="btn-cyber full-width">SEND MESSAGE</button>
+            </div>
+            
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-logo">
+                <h2>VAGARIOUS <span>SOLUTIONS</span></h2>
+                <p style="color: #666; max-width: 400px;">
+                    OUR CORE STRENGTH LIES IN DELIVERING CUTTING-EDGE IT STAFFING AND SOFTWARE DEVELOPMENT SOLUTIONS THAT DRIVE BUSINESS TRANSFORMATION.
+                </p>
+            </div>
+            <div>
+                <h4 style="font-family: var(--font-cyber); margin-bottom: 20px; color: var(--cyan);">LOCATION</h4>
+                <p style="color: #888;">
+                    2nd Floor, Spline Arcade,<br>
+                    Madhapur, Hyderabad – 500081<br>
+                    Tel: +91 89198 01095
+                </p>
+                <div class="map">
+                <iframe src="https://www.google.com/maps?q=Madhapur,Hyderabad&output=embed"></iframe>
+            </div>
+            </div>
+            <div class="social-icons">
+                <h4 style="font-family: var(--font-cyber); margin-bottom: 20px; color: var(--purple);">CONNECT</h4>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+        <p style="text-align: center; color: #333; font-size: 0.8rem; letter-spacing: 2px;">
+            &copy; 2026 VAGARIOUS SOLUTIONS PVT LTD. ALL ENCRYPTIONS RESERVED.
+        </p>
+    </footer>
+
+    <script>
+        /* --- DYNAMIC PLEXUS BACKGROUND --- */
+        const canvas = document.getElementById('plexusCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = (Math.random() - 0.5) * 0.6;
+                this.radius = Math.random() * 1.5;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 242, 255, 0.4)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            const count = (canvas.width * canvas.height) / 12000;
+            for (let i = 0; i < count; i++) particles.push(new Particle());
+        }
+
+        function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(loop);
+        }
+
+        window.addEventListener('resize', init);
+        init(); loop();
+
+        /* --- SCROLL REVEAL ENGINE --- */
+        const observerOptions = { threshold: 0.15 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        /* --- PARALLAX HERO EFFECT --- */
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const title = document.getElementById('glitch-title');
+            title.style.transform = `translateY(${scrolled * 0.4}px)`;
+            title.style.opacity = 1 - (scrolled / 800);
+        });
+    </script>
+</body>
+</html>
